@@ -1,17 +1,20 @@
 package arrowhead.insurance.college.admission;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class QualificationVerifier {
 
-    private static String currRejectReason = "";
+    private static List<String> currRejectReason = Lists.newArrayList();
     private static final int ACCEPT_GPA = 90;
     private static final int REJECT_GPA = 70;
     private static final int ACCEPT_SAT_SCORE = 1920;
     private static final int ACCEPT_ACT_SCORE = 27;
+    private static final String STATE = "California";
     
     //Prevent from instantiation
     private QualificationVerifier() {};
@@ -19,7 +22,7 @@ public class QualificationVerifier {
     protected static boolean verifyStudentQualification(Student student) {
         boolean isQualified = checkLegalName(student.getFirstName()) &&
                               checkLegalName(student.getLastName()) &&
-                              checkAge(student.getAge(), student.isInStateStudent()) &&
+                              checkAge(student.getAge(), student.getState()) &&
                               checkGPA(student.getGPA()) &&
                               checkTestScore(student.getSATscore(), student.getACTscore()) &&
                               checkFelonies(student.hasFelony()) &&
@@ -40,7 +43,7 @@ public class QualificationVerifier {
         if (ascii >= 65 && ascii <= 90) {
             return true;
         }
-        currRejectReason += "The first letter of either first or last name is not capitalized.\n";
+        currRejectReason.add("The first letter of either first or last name is not capitalized.\n");
         return false;
     }
     
@@ -48,16 +51,17 @@ public class QualificationVerifier {
         if (name.equals(name.toLowerCase())) {
             return true;
         }
-        currRejectReason += "Either the first or last name without the first letter are not all lower case.\n";
+        currRejectReason.add("Either the first or last name without the first letter are not all lower case.\n");
         return false;
     }
 
-    private static boolean checkAge(int age, boolean isInStateStudent) {
+    private static boolean checkAge(int age, String state) {
+        boolean isInStateStudent = state.equals(STATE);
         if ((isInStateStudent && age >= 17 && age < 26) ||
             (!isInStateStudent && age > 80)) {
             return true;
         } else if (age < 0) {
-            currRejectReason += "The age of the applicant should not be negative.\n";
+            currRejectReason.add("The age of the applicant should not be negative.\n");
         }
         return false;
     }
@@ -66,7 +70,7 @@ public class QualificationVerifier {
         if (gpa >= ACCEPT_GPA) {
             return true;
         } else if (gpa < REJECT_GPA) {
-            currRejectReason += "The application's GPA is below 70% of the scale provided on application.\n";
+            currRejectReason.add("The application's GPA is below 70% of the scale provided on application.\n");
         }
         return false;
     }
@@ -79,7 +83,7 @@ public class QualificationVerifier {
 
     private static boolean checkFelonies(boolean hasFelony) {
         if (hasFelony) {
-            currRejectReason += "The applicant has one or more felonies over the past 5 years.\n";
+            currRejectReason.add("The applicant has one or more felonies over the past 5 years.\n");
             return false;
         }
         return true;

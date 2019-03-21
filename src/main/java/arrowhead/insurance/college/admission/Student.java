@@ -1,43 +1,55 @@
 package arrowhead.insurance.college.admission;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 
 public class Student {
 
     private final String firstName;
     private final String lastName;
-    private final boolean isInStateStudent;
+    private final String state;
     private final int age;
     private final double gpaGrade;
     private final Optional<Integer> scoreSAT;
     private final Optional<Integer> scoreACT;
     private final boolean hasFelony;
-    private String rejectReason = "";
-    private Optional<Boolean> applicationStatus = Optional.empty();
+    private final int excelSheet;
+    private final int excelSheetRow;
+    private List<String> rejectReason = Lists.newArrayList();
 
-    public Student (String firstName, String lastName, boolean isInStateStudent, int age,
-                    double gpaGrade, Optional<Integer> scoreSAT, Optional<Integer> scoreACT, boolean hasFelony) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isInStateStudent = isInStateStudent;
-        this.age = age;
-        this.gpaGrade = gpaGrade;
-        this.scoreSAT = scoreSAT;
-        this.scoreACT = scoreACT;
-        this.hasFelony = hasFelony;
+    public Student(StudentBuilder builder) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(builder.firstName), "The first name of the applicant should not be empty or null");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(builder.lastName), "The last name of the applicant should not be empty or null");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(builder.state), "The state where the  applicant comes from should not be empty or null");
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.state = builder.state;
+        this.age = builder.age;
+        this.gpaGrade = builder.gpaGrade;
+        this.scoreSAT = builder.scoreSAT;
+        this.scoreACT = builder.scoreACT;
+        this.hasFelony = builder.hasFelony;
+        this.excelSheet = builder.excelSheet;
+        this.excelSheetRow = builder.excelSheetRow;
     }
 
     public static class StudentBuilder {
-        private  String firstName;
-        private String lastName;
-        private boolean isInStateStudent;
+        private  String firstName = null;
+        private String lastName = null;
+        private String state = null;
         private int age;
         private double gpaGrade;
-        private Optional<Integer> scoreSAT;
-        private Optional<Integer> scoreACT;
-        private boolean hasFelony;
+        private Optional<Integer> scoreSAT = Optional.empty();
+        private Optional<Integer> scoreACT = Optional.empty();
+        private boolean hasFelony = false;
+        private int excelSheet = -1;
+        private int excelSheetRow = -1;
 
         protected static StudentBuilder newBuilder() {
             return new StudentBuilder();
@@ -53,8 +65,8 @@ public class Student {
             return this;
         }
 
-        protected StudentBuilder setIsInStateStudent(boolean isInStateStudent) {
-            this.isInStateStudent = isInStateStudent;
+        protected StudentBuilder setState(String state) {
+            this.state = state;
             return this;
         }
 
@@ -83,9 +95,18 @@ public class Student {
             return this;
         }
 
+        protected StudentBuilder setExcelSheet(int excelSheet) {
+            this.excelSheet = excelSheet;
+            return this;
+        }
+
+        protected StudentBuilder setExcelSheetRow(int excelSheetRow) {
+            this.excelSheetRow = excelSheetRow;
+            return this;
+        }
+
         protected Student build() {
-            return new Student(firstName, lastName, isInStateStudent, age,
-                               gpaGrade, scoreSAT, scoreACT, hasFelony);
+            return new Student(this);
         }
     }
 
@@ -97,8 +118,8 @@ public class Student {
         return lastName;
     }
 
-    protected boolean isInStateStudent() {
-        return isInStateStudent;
+    protected String getState() {
+        return state;
     }
 
     protected int getAge() {
@@ -121,19 +142,32 @@ public class Student {
         return hasFelony;
     }
 
+    protected int getExcelSheet() {
+        return excelSheet;
+    }
+
+    protected int getExcelSheetRow() {
+        return excelSheetRow;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Student) {
             Student student = (Student)obj;
             if (firstName.equals(student.firstName)) {
                 if (lastName.equals(student.lastName)) {
-                    if (isInStateStudent == student.isInStateStudent) {
+                    if (state.equals(student.state)) {
                         if (age == student.age) {
                             if (gpaGrade == student.gpaGrade) {
                                 if (scoreSAT == student.scoreSAT) {
                                     if (scoreACT == student.scoreACT) {
                                         if (hasFelony == student.hasFelony) {
-                                            return true;
+                                            if (excelSheet == student.excelSheet) {
+                                                if (excelSheetRow == student.excelSheetRow) {
+                                                    return true;
+                                                }
+                                            }
+
                                         }
                                     }
                                 }
@@ -148,15 +182,15 @@ public class Student {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, isInStateStudent, age,
-                            gpaGrade, scoreSAT, scoreACT, hasFelony);
+        return Objects.hash(firstName, lastName, state, age, gpaGrade,
+                            scoreSAT, scoreACT, hasFelony, excelSheetRow, excelSheet);
     }
 
-    protected void setApplicationStatus(boolean status) {
-        applicationStatus = Optional.of(status);
-    }
-
-    protected void setRejectReasons(String rejectReason) {
+    protected void setRejectReasons(List<String> rejectReason) {
         this.rejectReason= rejectReason;
+    }
+
+    protected List<String> getRejectReasons(){
+        return rejectReason;
     }
 }
