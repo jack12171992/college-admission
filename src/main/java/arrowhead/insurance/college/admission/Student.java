@@ -8,7 +8,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-
+/**
+ * The purpose of this class is to represent a Student
+ * @author Jack
+ *
+ */
 public class Student {
 
     private final String firstName;
@@ -21,7 +25,7 @@ public class Student {
     private final boolean hasFelony;
     private final int excelSheet;
     private final int excelSheetRow;
-    private List<String> rejectReason = Lists.newArrayList();
+    private Optional<List<String>> rejectReason = Optional.empty();     //The reject reasons that the student might have after verifying student's qualification
 
     public Student(StudentBuilder builder) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(builder.firstName), "The first name of the applicant should not be empty or null");
@@ -186,11 +190,11 @@ public class Student {
                             scoreSAT, scoreACT, hasFelony, excelSheetRow, excelSheet);
     }
 
-    protected void setRejectReasons(List<String> rejectReason) {
-        this.rejectReason= rejectReason;
+    protected void setRejectReasons(List<String> rejectReasons) {
+        this.rejectReason= Optional.ofNullable(rejectReasons);
     }
 
-    protected List<String> getRejectReasons(){
+    protected Optional<List<String>> getRejectReasons(){
         return rejectReason;
     }
 }
