@@ -5,7 +5,7 @@ Instruction to use the application:
 1.) Clone down the repo by using git clone
 
 
-2.) Build the artifact by running "mvn clean install" or the artifact is already included in this repo, which is the college-admisssion.jar file
+2.) Build the artifact by running # "mvn clean install" or the artifact is already included in this repo, which is the college-admisssion.jar file
 
 
 3.) Navigate to the target folder and run "java -jar college-admission.jar" to start up the application.
