@@ -19,3 +19,6 @@ a Excel file would be a proper to handle this, so the input file should be an Ex
 
 
 6.) The result is written in the same excel file and now the user could see the result by opening up the same record file.
+
+
+Note: In order to add additional rules in the future, the user could go into QualificationVerifier.java and add check method and evaluate the statement that is returned in the verifyStudentQualification method. The use would also have the ability to add additional evaluated information in the Student.java to the Student and the StudentBuilder class. This application is also capable to read and write an excel file that has more than one sheet.
